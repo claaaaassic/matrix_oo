@@ -17,7 +17,8 @@ LDFLAGS = -lpthread
 
 OBJS := \
 	stopwatch.o \
-	matrix_naive.o
+	matrix_naive.o \
+	matrix_submatrix.o
 
 deps := $(OBJS:%.o=%.o.d)
 OBJS := $(addprefix $(OUT)/,$(OBJS))

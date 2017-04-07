@@ -1,12 +1,13 @@
 #include "matrix.h"
 #include <stdlib.h>
+#include <string.h>
 
-struct naive_priv {
+struct matrix_priv {
     float values[4][4];
 };
 
 #define PRIV(x) \
-    ((struct naive_priv *) ((x)->priv))
+    ((struct matrix_priv *) ((x)->priv))
 
 static void assign(Matrix *thiz, Mat4x4 data)
 {
@@ -33,17 +34,29 @@ static bool equal(const Matrix *l, const Matrix *r)
 
 static bool mul(Matrix *dst, const Matrix *l, const Matrix *r)
 {
-    /* FIXME: error hanlding */
-    dst->priv = malloc(4 * 4 * sizeof(int));
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            for (int k = 0; k < 4; k++)
-                PRIV(dst)->values[i][j] += PRIV(l)->values[i][k] *
-                                           PRIV(r)->values[k][j];
+    int src1_h = 4;
+    int src2_w = 4;
+    int src2_h = 4;
+    memset(&(PRIV(dst)->values), 0, sizeof(int) * src1_h * src2_w);
+
+    for (int i = 0; i < src1_h; i += 4) {
+        for (int j = 0; j < src2_w; j += 4) {
+            for (int k = 0; k < src2_h; k += 4) {
+                for (int i2 = 0; i2 < 4; ++i2) {
+                    for (int j2 = 0; j2 < 4; ++j2) {
+                        for (int k2 = 0; k2 < 4; ++k2) {
+                            PRIV(dst)->values[(i + i2)][(j + j2)] += PRIV(l)->values[(i + i2)][(k + k2)] *
+                                    PRIV(r)->values[(k + k2)][(j + j2)];
+                        }
+                    }
+                }
+            }
+        }
+    }
     return true;
 }
 
-MatrixAlgo NaiveMatrixProvider = {
+MatrixAlgo SubMatrixMatrixProvider = {
     .assign = assign,
     .equal = equal,
     .mul = mul,

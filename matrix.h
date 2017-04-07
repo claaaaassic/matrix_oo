@@ -22,5 +22,6 @@ typedef struct {
 
 /* Available matrix providers */
 extern MatrixAlgo NaiveMatrixProvider;
+extern MatrixAlgo SubMatrixMatrixProvider;
 
 #endif /* MATRIX_H_ */
